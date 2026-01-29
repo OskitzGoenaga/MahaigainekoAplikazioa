@@ -7,9 +7,9 @@ import javax.swing.JOptionPane;
 
 public class Conexioa {
     private static String driver = "com.mysql.jdbc.Driver"; // actualizado
-    private static String usuario = "kudeatzailea";
-    private static String password = "1MG3_2025";
-    private static String url = "jdbc:mysql://192.168.115.163:3306/db_erronka2?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static String usuario = "root";
+    private static String password = "1MG32025";
+    private static String url = "jdbc:mysql://localhost:3306/db_erronka2?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
     static {
         try {

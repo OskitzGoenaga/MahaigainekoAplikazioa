@@ -9,20 +9,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.*;
  
-public class PantallaKonsultak extends JFrame {
+public class PantailaKontsultak extends JFrame {
  
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTable table;
  
     private JButton btnKontsulta; // SELECT
-    private JButton btnSartu;     // INSERT
     private JButton btnEzabatu;   // DELETE
  
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                PantallaKonsultak frame = new PantallaKonsultak();
+            	PantailaKontsultak frame = new PantailaKontsultak();
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -30,7 +29,7 @@ public class PantallaKonsultak extends JFrame {
         });
     }
  
-    public PantallaKonsultak() {
+    public PantailaKontsultak() {
         setTitle("SOPORTEA");
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setBounds(100, 100, 760, 480);
@@ -44,10 +43,7 @@ public class PantallaKonsultak extends JFrame {
         btnKontsulta.setBounds(20, 20, 120, 40);
         contentPane.add(btnKontsulta);
  
-        btnSartu = new JButton("Berria");
-        btnSartu.setFont(new Font("Tahoma", Font.PLAIN, 16));
-        btnSartu.setBounds(20, 70, 120, 40);
-        contentPane.add(btnSartu);
+
  
         btnEzabatu = new JButton("Ezabatu");
         btnEzabatu.setFont(new Font("Tahoma", Font.PLAIN, 16));
@@ -69,8 +65,7 @@ public class PantallaKonsultak extends JFrame {
         scrollPane.setViewportView(table);
  
         // ---- Ekintzak ----
-        btnKontsulta.addActionListener(this::kargatuSelekta); // SELECT
-        btnSartu.addActionListener(this::sartuErregistroa);       // INSERT
+        btnKontsulta.addActionListener(this::kargatuSelekta); // SELECT     
         btnEzabatu.addActionListener(this::ezabatuHautatua);      // DELETE
     }
  
@@ -101,68 +96,6 @@ public class PantallaKonsultak extends JFrame {
         }
     }
  
-    // ============= INSERT =============
-    private void sartuErregistroa(ActionEvent e) {
-        // Datuak dialogo bidez eskatu
-        String arazoa = JOptionPane.showInputDialog(this, "Sartu arazoa:");
-        if (arazoa == null || arazoa.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Arazoa ezin da hutsik egon.");
-            return;
-        }
-        String input = JOptionPane.showInputDialog(this, "Sartu Bezeroaren ID-a:");
-
-        if (input == null || input.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Bezeroaren ID-a ezin da hutsik egon.");
-            return;
-        }
-
-        int bezId;
-
-        try {
-            bezId = Integer.parseInt(input);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Bezeroaren ID-a zenbaki bat izan behar da.");
-            return;
-        }
-
-        String input2 = JOptionPane.showInputDialog(this, "Sartu langilearen ID-a:");
-
-        if (input == null || input.isBlank()) {
-            JOptionPane.showMessageDialog(this, "Langilearen ID-a ezin da hutsik egon.");
-            return;
-        }
-
-        int lanId;
-
-        try {
-            lanId = Integer.parseInt(input);
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "ID-a zenbaki bat izan behar da.");
-            return;
-        }
-
-        String sql = "INSERT INTO arazoak (arazoa, bezeroa_id, langilea_id) VALUES (?, ?, ?)";
- 
-        Conexioa kon=new Conexioa();
-        try (Connection conexion= kon.getConnection();
-             PreparedStatement ps = conexion.prepareStatement(sql)) {
- 
-            ps.setString(1, arazoa);
-            ps.setInt(2, bezId);
-            ps.setInt(3, lanId);
- 
-            int rows = ps.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Erregistro berria sartuta (" + rows + ").");
- 
-            // Taula berriro kargatu aldaketa ikusteko
-            kargatuSelekta(null);
- 
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                "Errorea sartzean:\n" + ex.getMessage(),
-                "Errorea", JOptionPane.ERROR_MESSAGE);
-        }
-    }
  
     // ============= DELETE =============
     private void ezabatuHautatua(ActionEvent e) {

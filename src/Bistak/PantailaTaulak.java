@@ -1,17 +1,18 @@
 package Bistak;
-
+ 
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-public class PantallaTaulak extends JFrame {
-
+ 
+public class PantailaTaulak extends JFrame {
+ 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private String rol;
-
+ 
     // Botoiak atributu bezala gero rolarekin ezkutatzeko.
     private JButton btnBezeroak;
     private JButton btnErosketak;
@@ -20,96 +21,92 @@ public class PantallaTaulak extends JFrame {
     private JButton btnProduktuak;
     private JButton btnSalmentak;
     private JButton btnSoporteak;
-    private JButton btnAtzera;
-
+ 
     // Konstruktorea rolarekin
-    public PantallaTaulak(String rol) {
+    public PantailaTaulak(String rol) {
         this.rol = rol;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
-
+        setBounds(100, 100, 500, 350);
+ 
         initComponents();
-
-        // Botoiak ezkutatzeko rolaren arabera.
-        if ("langilea".equals(rol)) {
-            btnHornitzaileak.setVisible(false);
-            btnLangileak.setVisible(false);
-        } else if (!"langilea".equals(rol)) {
-        	JOptionPane.showMessageDialog(this, "Rol ezezaguna "+rol);
-            return;
-        }
+        aplicarPermisos();
     }
-
+ 
     // Kontsuktore hutsa
-    public PantallaTaulak() {
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 450, 300);
-        initComponents();
+    public PantailaTaulak() {
+        this("langilea"); // default moduan proba
     }
-
+ 
     // Konponenteak inizializatzen dituen metodoa.
     private void initComponents() {
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5,5,5,5));
-        contentPane.setLayout(null);
+        contentPane.setBorder(new EmptyBorder(10,10,10,10));
+        // 3 zutabe, errenkada automatikoak; 10px tarte horizontala eta bertikala
+        contentPane.setLayout(new GridLayout(0, 3, 10, 10));
         setContentPane(contentPane);
-
-        //Bezeroak botoia 
+ 
+        // Bezeroak botoia
         btnBezeroak = new JButton("Bezeroak");
-        btnBezeroak.setBounds(47, 31, 91, 45);
         contentPane.add(btnBezeroak);
-
-        //Erosketak botoia
+ 
+        // Erosketak botoia
         btnErosketak = new JButton("Erosketak");
-        btnErosketak.setBounds(172, 31, 91, 45);
         contentPane.add(btnErosketak);
-
-        //Hornitzaileak botoia
+ 
+        // Hornitzaileak botoia
         btnHornitzaileak = new JButton("Hornitzaileak");
-        btnHornitzaileak.setBounds(301, 31, 91, 45);
         contentPane.add(btnHornitzaileak);
-
-        //Langileak botoia
+ 
+        // Langileak botoia
         btnLangileak = new JButton("Langileak");
-        btnLangileak.setBounds(47, 107, 91, 45);
         contentPane.add(btnLangileak);
-
-        //Produktuak botoia
+ 
+        // Produktuak botoia
         btnProduktuak = new JButton("Produktuak");
-        btnProduktuak.setBounds(172, 107, 91, 45);
         contentPane.add(btnProduktuak);
-
-        //Salmenta botoia
+ 
+        // Salmentak botoia
         btnSalmentak = new JButton("Salmentak");
-        btnSalmentak.setBounds(301, 107, 91, 45);
         contentPane.add(btnSalmentak);
-
-        //Soporteak botoia
+ 
+        // Soporteak botoia
         btnSoporteak = new JButton("Soporteak");
-        btnSoporteak.setBounds(47, 178, 91, 45);
         contentPane.add(btnSoporteak);
         btnSoporteak.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PantallaKonsultak pantalla = new PantallaKonsultak();
+            	PantailaKontsultak pantalla = new PantailaKontsultak();
                 pantalla.setVisible(true);
                 dispose();
             }
         });
-
-        // Atzera botoia
-        btnAtzera = new JButton("Atzera");
-        btnAtzera.setBounds(172, 178, 91, 45);
-        contentPane.add(btnAtzera);
-        btnAtzera.addActionListener(e -> {
-            dispose(); // lehio ixteko.
-        });
     }
-
+ 
+    // Rolaren arabera botoiak erakutsi/kendu (kendu = ez du hutsunerik uzten)
+    private void aplicarPermisos() {
+        // Adibidea: "langilea" ez da admin; kendu bi botoi
+        if ("langilea".equalsIgnoreCase(rol)) {
+            removeIfPresent(btnHornitzaileak);
+            removeIfPresent(btnLangileak);
+        } else {
+            // Bestelako rolak (admin, kudeatzaile, etab.) guztia ikus dezakete (adib.)
+            JOptionPane.showMessageDialog(this, "Rol: " + rol);
+        }
+        contentPane.revalidate();
+        contentPane.repaint();
+    }
+ 
+    // Laguntzailea: botoia baldin badago panelaren barruan, kendu
+    private void removeIfPresent(JButton btn) {
+        if (btn.getParent() == contentPane) {
+            contentPane.remove(btn);
+        }
+    }
+ 
     // Main-a lehio probatzeko.
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
-                PantallaTaulak frame = new PantallaTaulak("langilea"); // proba
+                PantailaTaulak frame = new PantailaTaulak("langilea"); // proba
                 frame.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();

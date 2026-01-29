@@ -91,7 +91,7 @@ public class PantallaPrintzipala extends JFrame {
 	                String rol = login();
 
 	                if (rol != null && !rol.isEmpty()) {
-	                    PantallaTaulak pantalla = new PantallaTaulak(rol);
+	                    PantailaTaulak pantalla = new PantailaTaulak(rol);
 	                    pantalla.setVisible(true);
 	                    dispose();
 	                } else {
