@@ -1,116 +1,194 @@
 package Bistak;
- 
-import java.awt.EventQueue;
-import java.awt.GridLayout;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.awt.event.ActionListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
- 
+
+import Taulak.*;
+
 public class PantailaTaulak extends JFrame {
- 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
-    private String rol;
- 
-    // Botoiak atributu bezala gero rolarekin ezkutatzeko.
-    private JButton btnBezeroak;
-    private JButton btnErosketak;
-    private JButton btnHornitzaileak;
-    private JButton btnLangileak;
-    private JButton btnProduktuak;
-    private JButton btnSalmentak;
-    private JButton btnSoporteak;
- 
-    // Konstruktorea rolarekin
-    public PantailaTaulak(String rol) {
-        this.rol = rol;
+    private final String rola;
+
+    // Botoiak
+    private JButton btnBezeroak, btnErosketak, btnHornitzaileak, btnLangileak,
+                    btnProduktuak, btnSalmentak, btnSaskia, btnSoportea;
+
+    public PantailaTaulak(String rola) {
+        this.rola = rola;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 500, 350);
- 
+        setBounds(100, 100, 720, 420);
         initComponents();
-        aplicarPermisos();
+        aplikatuBaimenak();
     }
- 
-    // Kontsuktore hutsa
+
     public PantailaTaulak() {
-        this("langilea"); // default moduan proba
+        this("langilea");
     }
- 
-    // Konponenteak inizializatzen dituen metodoa.
+
     private void initComponents() {
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(10,10,10,10));
-        // 3 zutabe, errenkada automatikoak; 10px tarte horizontala eta bertikala
         contentPane.setLayout(new GridLayout(0, 3, 10, 10));
         setContentPane(contentPane);
- 
-        // Bezeroak botoia
-        btnBezeroak = new JButton("Bezeroak");
+
+        btnBezeroak      = new JButton("Bezeroak");       btnBezeroak.addActionListener(this::irikiBezeroak);
+        btnErosketak     = new JButton("Erosketak");      btnErosketak.addActionListener(this::irikiErosketak);
+        btnHornitzaileak = new JButton("Hornitzaileak");  btnHornitzaileak.addActionListener(this::irikiHornitzaileak);
+        btnLangileak     = new JButton("Langileak");      btnLangileak.addActionListener(this::irikiLangileak);
+        btnProduktuak    = new JButton("Produktuak");     btnProduktuak.addActionListener(this::irikiProduktuak);
+        btnSalmentak     = new JButton("Salmentak");      btnSalmentak.addActionListener(this::irikiSalmentak);
+        btnSaskia        = new JButton("Saskia");         btnSaskia.addActionListener(this::irikiSaskia);
+        btnSoportea      = new JButton("Soportea");       btnSoportea.addActionListener(this::irikiSoportea);
+
         contentPane.add(btnBezeroak);
- 
-        // Erosketak botoia
-        btnErosketak = new JButton("Erosketak");
         contentPane.add(btnErosketak);
- 
-        // Hornitzaileak botoia
-        btnHornitzaileak = new JButton("Hornitzaileak");
         contentPane.add(btnHornitzaileak);
- 
-        // Langileak botoia
-        btnLangileak = new JButton("Langileak");
         contentPane.add(btnLangileak);
- 
-        // Produktuak botoia
-        btnProduktuak = new JButton("Produktuak");
         contentPane.add(btnProduktuak);
- 
-        // Salmentak botoia
-        btnSalmentak = new JButton("Salmentak");
         contentPane.add(btnSalmentak);
- 
-        // Soporteak botoia
-        btnSoporteak = new JButton("Soporteak");
-        contentPane.add(btnSoporteak);
-        btnSoporteak.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	PantailaKontsultak pantalla = new PantailaKontsultak();
-                pantalla.setVisible(true);
-                dispose();
-            }
-        });
+        contentPane.add(btnSaskia);
+        contentPane.add(btnSoportea);
     }
- 
-    // Rolaren arabera botoiak erakutsi/kendu (kendu = ez du hutsunerik uzten)
-    private void aplicarPermisos() {
-        // Adibidea: "langilea" ez da admin; kendu bi botoi
-        if ("langilea".equalsIgnoreCase(rol)) {
-            removeIfPresent(btnHornitzaileak);
-            removeIfPresent(btnLangileak);
-        } else {
-            // Bestelako rolak (admin, kudeatzaile, etab.) guztia ikus dezakete (adib.)
-            JOptionPane.showMessageDialog(this, "Rol: " + rol);
+
+    private void kendu(JButton b) {
+        if (b.getParent() == contentPane) contentPane.remove(b);
+    }
+
+    /** Rolen arabera botoiak ezkutatu/erakutsi */
+    private void aplikatuBaimenak() {
+        if ("langilea".equalsIgnoreCase(rola)) {
+            kendu(btnHornitzaileak);
+            kendu(btnLangileak);
         }
         contentPane.revalidate();
         contentPane.repaint();
     }
- 
-    // Laguntzailea: botoia baldin badago panelaren barruan, kendu
-    private void removeIfPresent(JButton btn) {
-        if (btn.getParent() == contentPane) {
-            contentPane.remove(btn);
-        }
+
+
+    private void irikiBezeroak(ActionEvent e) {
+        new TaulaLeihoak.Bezeroak()
+                .setBaimenak(perIns("bezeroak"), perUpd("bezeroak"), perDel("bezeroak"))
+                .setVisible(true);
     }
- 
-    // Main-a lehio probatzeko.
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                PantailaTaulak frame = new PantailaTaulak("langilea"); // proba
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+
+    private void irikiErosketak(ActionEvent e) {
+        new TaulaLeihoak.Erosketak()
+                .setBaimenak(perIns("erosketak"), perUpd("erosketak"), perDel("erosketak"))
+                .setVisible(true);
+    }
+
+    private void irikiHornitzaileak(ActionEvent e) {
+        new TaulaLeihoak.Hornitzaileak()
+                .setBaimenak(perIns("hornitzaileak"), perUpd("hornitzaileak"), perDel("hornitzaileak"))
+                .setVisible(true);
+    }
+
+    private void irikiLangileak(ActionEvent e) {
+        new TaulaLeihoak.Langileak()
+                .setBaimenak(perIns("langileak"), perUpd("langileak"), perDel("langileak"))
+                .setVisible(true);
+    }
+
+    private void irikiProduktuak(ActionEvent e) {
+        new TaulaLeihoak.Produktuak()
+                .setBaimenak(perIns("produktuak"), perUpd("produktuak"), perDel("produktuak"))
+                .setVisible(true);
+    }
+
+    private void irikiSalmentak(ActionEvent e) {
+        new TaulaLeihoak.Salmentak()
+                .setBaimenak(perIns("salmentak"), perUpd("salmentak"), perDel("salmentak"))
+                .setVisible(true);
+    }
+
+    private void irikiSaskia(ActionEvent e) {
+        new TaulaLeihoak.Saskia()
+                .setBaimenak(perIns("saskia"), perUpd("saskia"), perDel("saskia"))
+                .setVisible(true);
+    }
+
+    private void irikiSoportea(ActionEvent e) {
+        new TaulaLeihoak.Arazoak()
+                .setBaimenak(perIns("arazoak"), perUpd("arazoak"), perDel("arazoak"))
+                .setVisible(true);
+    }
+
+
+    private boolean perIns(String taula) {
+        String r = rola.toLowerCase();
+        String t = taula.toLowerCase();
+
+        if (r.equals("langilea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak")) return true;
+            return false;
+        }
+
+        if (r.equals("arduraduna")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak")) return true;
+            if (t.equals("erosketak")) return true; 
+            return false;
+        }
+
+        if (r.equals("kudeatzailea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak") || t.equals("erosketak"))
+                return true;
+            if (t.equals("langileak")) return true;
+            return false;
+        }
+
+        return false;
+    }
+
+    private boolean perUpd(String taula) {
+        String r = rola.toLowerCase();
+        String t = taula.toLowerCase();
+
+        if (r.equals("langilea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak")) return true;
+            return false;
+        }
+
+        if (r.equals("arduraduna")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak")) return true;
+            if (t.equals("langileak")) return true; 
+            return false;
+        }
+
+        if (r.equals("kudeatzailea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak") || t.equals("langileak"))
+                return true;
+            return false;
+        }
+
+        return false;
+    }
+
+    private boolean perDel(String taula) {
+        String r = rola.toLowerCase();
+        String t = taula.toLowerCase();
+
+        if (r.equals("langilea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak")) return true;
+            if (t.equals("arazoak")) return true; 
+            return false;
+        }
+
+        if (r.equals("arduraduna")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak")) return true;
+            if (t.equals("arazoak")) return true;
+            return false;
+        }
+
+        if (r.equals("kudeatzailea")) {
+            if (t.equals("bezeroak") || t.equals("produktuak") || t.equals("hornitzaileak")) return true;
+            if (t.equals("langileak")) return true; 
+            if (t.equals("arazoak")) return true;
+            return false;
+        }
+
+        return false;
     }
 }
