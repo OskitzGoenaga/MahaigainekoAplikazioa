@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class Conexioa {
-    private static String driver = "com.mysql.jdbc.Driver"; // actualizado
+    private static String driver = "com.mysql.jdbc.Driver";
     private static String usuario = "root";
     private static String password = "1MG32025";
     private static String url = "jdbc:mysql://localhost:3306/db_erronka2?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
