@@ -16,7 +16,7 @@ import java.util.Date;
  
 public class SortuFaktura {
  
-    private static final String FAKTURA_KARPETA_LOKALA = "fakturak/";
+    private static final String FAKTURA_KARPETA_LOKALA = "Fakturak/";
       
     public static String sortuFaktura(int salmentaId) {
         
