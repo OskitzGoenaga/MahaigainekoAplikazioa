@@ -17,10 +17,7 @@ import java.util.Date;
 public class SortuFaktura {
  
     private static final String FAKTURA_KARPETA_LOKALA = "fakturak/";
-    private static final String ZERBITZARI_KARPETA = "C:/xampp/htdocs/WEB/fakturak/";
-    
-    // Faktura PDF bat sortzen du
-    
+      
     public static String sortuFaktura(int salmentaId) {
         
         // Karpeta lokala sortu ez badago
@@ -39,7 +36,7 @@ public class SortuFaktura {
                 return null;
             }
             
-            // Kontsulta - ALDATU TAULA IZENA "saskia" → "saskiak" zure datu-basearen arabera
+
             String query = "SELECT s.id, s.kantitatea, s.data, " +
                           "b.izena as bezero_izena, b.abizena as bezero_abizena, b.email, " +
                           "p.izena as produktu_izena, p.prezioa " +
@@ -59,7 +56,7 @@ public class SortuFaktura {
             
             PDPageContentStream cs = new PDPageContentStream(document, page);
             
-            float y = 750; // Hasierako Y posizioa
+            float y = 750; 
             float margin = 50;
             
             // === GOIBURUA ===
@@ -210,47 +207,19 @@ public class SortuFaktura {
             
             cs.close();
             
-            // Gorde lokala
+            
             document.save(pdfPathLokala);
             document.close();
             
             rs.close();
             ps.close();
                         
-            // ZERBITZARIRA KOPIATU
-            kopiatuZerbitzarira(pdfPathLokala, pdfIzena);
             
-            return pdfIzena; // Fitxategi izena itzuli (faktura_X.pdf)
+            return pdfIzena; 
             
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             return null;
-        }
-    }
-    
-    /**
-     * PDF-a zerbitzarira kopiatu
-     */
-    private static void kopiatuZerbitzarira(String pdfPathLokala, String pdfIzena) {
-        try {
-            // Zerbitzariko karpeta sortu ez badago
-            File zerbitzariKarpeta = new File(ZERBITZARI_KARPETA);
-            if (!zerbitzariKarpeta.exists()) {
-                zerbitzariKarpeta.mkdirs();
-            }
-            
-            String helmugaPath = ZERBITZARI_KARPETA + pdfIzena;
-            
-            // Kopiatu fitxategia
-            java.nio.file.Files.copy(
-                new File(pdfPathLokala).toPath(),
-                new File(helmugaPath).toPath(),
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            );
-                        
-        } catch (Exception e) {
-            System.err.println("Errorea zerbitzarira kopiatzean: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

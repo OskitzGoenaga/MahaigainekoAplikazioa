@@ -1,11 +1,14 @@
 package Taulak;
-
+ 
 import Kontsultak.*;
-import java.util.Arrays;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-
+ 
+ 
 public class TaulaLeihoak {
-
+ 
     // ------------------ BEZEROAK ------------------
     public static class Bezeroak extends KontsultaOrokorrak {
         public Bezeroak() { super("Bezeroak"); }
@@ -21,7 +24,7 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ EROSKETAK ------------------
     public static class Erosketak extends KontsultaOrokorrak {
         public Erosketak() { super("Erosketak"); }
@@ -36,7 +39,7 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ HORNTZAILEAK ------------------
     public static class Hornitzaileak extends KontsultaOrokorrak {
         public Hornitzaileak() { super("Hornitzaileak"); }
@@ -50,7 +53,7 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ LANGILEAK ------------------
     public static class Langileak extends KontsultaOrokorrak {
         public Langileak() { super("Langileak"); }
@@ -67,7 +70,7 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ PRODUKTUAK ------------------
     public static class Produktuak extends KontsultaOrokorrak {
         public Produktuak() { super("Produktuak"); }
@@ -84,19 +87,169 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ SALMENTAK ------------------
     public static class Salmentak extends KontsultaOrokorrak {
-        public Salmentak() { super("Salmentak"); }
+        
+        private JButton btnSortuPDF;
+        
+        public Salmentak() {
+            super("Salmentak");
+            gehituPDFBotoia();
+        }
+        
         @Override protected String getTaula() { return "salmentak"; }
+        
         @Override protected List<ZutabeakDef> getZutabeak() {
             return Arrays.asList(
                 ZutabeakDef.pkAuto("id"),
                 ZutabeakDef.katea("faktura_path")
             );
         }
+        
+        // Botoi berria gehitzen du PDF-a sortzeko
+ 
+        private void gehituPDFBotoia() {
+            // Eskuratu botoien panela
+            Container contentPane = getContentPane();
+            Component[] components = contentPane.getComponents();
+            
+            JPanel botoiPanel = null;
+            for (Component comp : components) {
+                if (comp instanceof JPanel) {
+                    // Bilatu goiko panela (botoiak dauden lekua)
+                    JPanel panel = (JPanel) comp;
+                    if (panel.getComponents().length > 0 &&
+                        panel.getComponent(0) instanceof JButton) {
+                        botoiPanel = panel;
+                        break;
+                    }
+                }
+            }
+            
+            if (botoiPanel != null) {
+                // Sortu PDF botoia
+                btnSortuPDF = new JButton("Sortu PDF");
+                btnSortuPDF.setFont(new Font("Arial", Font.BOLD, 12));
+                btnSortuPDF.setFocusPainted(false);
+                
+                // Botoi ekintza
+                btnSortuPDF.addActionListener(e -> sortuPDFBotoia());
+                
+                // Gehitu panelera
+                botoiPanel.add(btnSortuPDF);
+                botoiPanel.revalidate();
+                botoiPanel.repaint();
+            }
+        }
+        
+        // PDF Sortu botoiari klik egitean
+ 
+        private void sortuPDFBotoia() {
+            // Aukeratutako errenkada eskuratu
+            int row = taula.getSelectedRow();
+            
+            if (row < 0) {
+                JOptionPane.showMessageDialog(this,
+                    "Mesedez, aukeratu salmenta bat taulan.",
+                    "Oharra",
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            // Salmenta ID-a eskuratu
+            Object idObj = taula.getValueAt(row, 0);
+            if (idObj == null) {
+                JOptionPane.showMessageDialog(this,
+                    "Errorea: Salmenta ID-a ez da aurkitu.",
+                    "Errorea",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int salmentaId = Integer.parseInt(idObj.toString());
+            
+            // Berrespena eskatu
+            int confirm = JOptionPane.showConfirmDialog(this,
+                "Salmenta #" + salmentaId + "rako PDF faktura sortu nahi duzu?",
+                "Berrespena",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+            
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
+            
+            // PDF SORTU
+            sortuPDF(salmentaId);
+        }
+        
+        // PDF faktura sortzen du
+ 
+        private void sortuPDF(int salmentaId) {
+            try {
+                // PDF sortu
+                String pdfPath = Faktura.SortuFaktura.sortuFaktura(salmentaId);
+                
+                if (pdfPath != null) {
+                    // Eguneratu salmentak taula PDF path-arekin
+                    try (java.sql.Connection cn = new Bistak.Conexioa().getConnection()) {
+                        java.sql.PreparedStatement ps = cn.prepareStatement(
+                            "UPDATE salmentak SET faktura_path = ? WHERE id = ?"
+                        );
+                        ps.setString(1, pdfPath);
+                        ps.setInt(2, salmentaId);
+                        ps.executeUpdate();
+                        ps.close();
+                        
+                        // Taula berritu
+                        int selectedRow = taula.getSelectedRow();
+                        Component root = SwingUtilities.getRoot(this);
+                        if (root instanceof JFrame) {
+                            JFrame frame = (JFrame) root;
+                            // Refresh egiteko metodoa deitu
+                            if (btnKargatu != null) {
+                                btnKargatu.doClick();
+                            }
+                        }
+                        
+                        // Errenkada bera aukeratu berriro
+                        if (selectedRow >= 0 && selectedRow < taula.getRowCount()) {
+                            taula.setRowSelectionInterval(selectedRow, selectedRow);
+                        }
+                        
+                        JOptionPane.showMessageDialog(this,
+                            "✓ Faktura PDF sortuta!\n\n" +
+                            "Fitxategia: " + pdfPath + "\n" +
+                            "Salmenta ID: " + salmentaId,
+                            "Arrakasta",
+                            JOptionPane.INFORMATION_MESSAGE);
+                        
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(this,
+                            "Errorea PDF path-a gordetzean:\n" + e.getMessage(),
+                            "Errorea",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                        "Errorea faktura PDF-a sortzerakoan.\n" +
+                        "Egiaztatu kontsola errore mezuak ikusteko.",
+                        "Errorea",
+                        JOptionPane.ERROR_MESSAGE);
+                }
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this,
+                    "Errorea PDF sortzerakoan:\n" + e.getMessage(),
+                    "Errorea",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
-
+ 
     // ------------------ SASKIA ------------------
     public static class Saskia extends KontsultaOrokorrak {
         public Saskia() { super("Saskia"); }
@@ -112,7 +265,7 @@ public class TaulaLeihoak {
             );
         }
     }
-
+ 
     // ------------------ ARAZOAK / SOPORTEA ------------------
     public static class Arazoak extends KontsultaOrokorrak {
         public Arazoak() { super("Arazoak (Soportea)"); }
