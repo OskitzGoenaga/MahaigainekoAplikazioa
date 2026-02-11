@@ -3,7 +3,6 @@ package Taulak;
 import Kontsultak.*;
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 
 public class TaulaLeihoak {
 
@@ -111,7 +110,6 @@ public class TaulaLeihoak {
             JPanel botoiPanel = null;
             for (Component comp : components) {
                 if (comp instanceof JPanel) {
-                    // Bilatu goiko panela (botoiak dauden lekua)
                     JPanel panel = (JPanel) comp;
                     if (panel.getComponents().length > 0 && 
                         panel.getComponent(0) instanceof JButton) {
@@ -127,10 +125,8 @@ public class TaulaLeihoak {
                 btnSortuPDF.setFont(new Font("Arial", Font.BOLD, 12));
                 btnSortuPDF.setFocusPainted(false);
                 
-                // Botoi ekintza
                 btnSortuPDF.addActionListener(e -> sortuPDFBotoia());
                 
-                // Gehitu panelera
                 botoiPanel.add(btnSortuPDF);
                 botoiPanel.revalidate();
                 botoiPanel.repaint();
@@ -139,7 +135,6 @@ public class TaulaLeihoak {
         
         // PDF Sortu botoiari klik egitean
         private void sortuPDFBotoia() {
-            // Aukeratutako errenkada eskuratu
             int row = taula.getSelectedRow();
             
             if (row < 0) {
@@ -162,7 +157,6 @@ public class TaulaLeihoak {
             
             int salmentaId = Integer.parseInt(idObj.toString());
             
-            // Berrespena eskatu
             int confirm = JOptionPane.showConfirmDialog(this,
                 "Salmenta #" + salmentaId + "rako PDF faktura sortu nahi duzu?",
                 "Berrespena",
@@ -173,14 +167,12 @@ public class TaulaLeihoak {
                 return;
             }
             
-            // PDF SORTU
             sortuPDF(salmentaId);
         }
         
         // PDF faktura sortzen du
         private void sortuPDF(int salmentaId) {
             try {
-                // PDF sortu
                 String pdfPath = Faktura.SortuFaktura.sortuFaktura(salmentaId);
                 
                 if (pdfPath != null) {
@@ -194,18 +186,15 @@ public class TaulaLeihoak {
                         ps.executeUpdate();
                         ps.close();
                         
-                        // Taula berritu
                         int selectedRow = taula.getSelectedRow();
                         Component root = SwingUtilities.getRoot(this);
                         if (root instanceof JFrame) {
                             JFrame frame = (JFrame) root;
-                            // Refresh egiteko metodoa deitu
                             if (btnKargatu != null) {
                                 btnKargatu.doClick();
                             }
                         }
                         
-                        // Errenkada bera aukeratu berriro
                         if (selectedRow >= 0 && selectedRow < taula.getRowCount()) {
                             taula.setRowSelectionInterval(selectedRow, selectedRow);
                         }

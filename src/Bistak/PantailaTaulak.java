@@ -57,7 +57,7 @@ public class PantailaTaulak extends JFrame {
         if (b.getParent() == contentPane) contentPane.remove(b);
     }
 
-    /** Rolen arabera botoiak ezkutatu/erakutsi */
+    // Rolen arabera botoiak ezkutatu/erakutsi
     private void aplikatuBaimenak() {
         if ("langilea".equalsIgnoreCase(rola)) {
             kendu(btnHornitzaileak);

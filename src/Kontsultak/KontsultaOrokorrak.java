@@ -45,7 +45,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
         return this;
     }
 
-    // ALDAKETA: ZutabeakDef ordez String array erabiltzen dugu
     protected abstract String getTaula();
     protected abstract String[] getZutabeIzenak();
 
@@ -55,7 +54,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
         root.setBorder(new EmptyBorder(10,10,10,10));
         setContentPane(root);
 
-        // ALDAKETA: Zuzenean getZutabeIzenak() deitzen dugu
         modeloa = new DefaultTableModel(getZutabeIzenak(), 0) {
             @Override public boolean isCellEditable(int r,int c){ return false; }
         };
@@ -75,13 +73,11 @@ public abstract class KontsultaOrokorrak extends JFrame {
 
         root.add(botoiak, BorderLayout.NORTH);
 
-        // ALDAKETA: getZutabeIzenak().length erabiltzen dugu
         formulario = new JPanel(new GridLayout(getZutabeIzenak().length, 2, 6, 6));
         formulario.setBorder(new EmptyBorder(10,10,10,10));
 
         formulario.setPreferredSize(new Dimension(350, 0)); 
 
-        // ALDAKETA: String array-tik formularioa sortzen dugu
         for (String zutabeIzena : getZutabeIzenak()) {
 
             JLabel lbl = new JLabel(zutabeIzena + ": ");
@@ -93,12 +89,10 @@ public abstract class KontsultaOrokorrak extends JFrame {
             tf.setFont(new Font("Arial", Font.PLAIN, 13));   
             tf.setMargin(new Insets(2, 8, 2, 8));
 
-            // ALDAKETA: "id" izena duten eremuak desgaitu (auto-increment)
             if (zutabeIzena.equalsIgnoreCase("id")) {
                 tf.setEnabled(false);
             }
             
-            // Zutabe izenak "data" edo "fecha" badira, tooltip jarri
             if (zutabeIzena.toLowerCase().contains("data") || 
                 zutabeIzena.toLowerCase().contains("fecha")) {
                 tf.setToolTipText("YYYY-MM-DD");
@@ -130,7 +124,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
-            // ALDAKETA: Zuzenean getZutabeIzenak() erabiltzen dugu
             while (rs.next()) {
                 String[] zutabeak = getZutabeIzenak();
                 Object[] row = new Object[zutabeak.length];
@@ -148,7 +141,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
     private void txertatu() {
         try (Connection cn = new Conexioa().getConnection()) {
 
-            // ALDAKETA: "id" zutabea ez txertatu (auto-increment delako)
             String[] guztiak = getZutabeIzenak();
             List<String> txertatukoZutabeak = new ArrayList<>();
             
@@ -182,7 +174,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
             kargatu();
             garbitu(txertatukoZutabeak);
             
-            // Hook metodoa deituz txertatu ondoren
             if (newId != -1) {
                 ondorenTxertatu(newId);
             }
@@ -194,7 +185,6 @@ public abstract class KontsultaOrokorrak extends JFrame {
     }
     
     protected void ondorenTxertatu(int id) {
-        // Subklaseek gainidatzi dezakete behar badute
     }
 
     // ---------------- UPDATE ----------------
@@ -203,15 +193,14 @@ public abstract class KontsultaOrokorrak extends JFrame {
         if (r < 0) { mezua("Aukeratu errenkada."); return; }
 
         Object pk = taula.getValueAt(r, 0);
-        String pkIzena = getZutabeIzenak()[0]; // Lehenengo zutabea da primary key-a
+        String pkIzena = getZutabeIzenak()[0];
 
         try (Connection cn = new Conexioa().getConnection()) {
 
-            // ALDAKETA: Primary key-a ez eguneratu (lehenengo zutabea)
             String[] guztiak = getZutabeIzenak();
             List<String> eguneratukoZutabeak = new ArrayList<>();
             
-            for (int i=1; i<guztiak.length; i++) { // i=1 hasita (id saltatu)
+            for (int i=1; i<guztiak.length; i++) {
                 eguneratukoZutabeak.add(guztiak[i]);
             }
 
@@ -241,7 +230,7 @@ public abstract class KontsultaOrokorrak extends JFrame {
         if (r < 0) { mezua("Aukeratu errenkada."); return; }
 
         Object pk = taula.getValueAt(r, 0);
-        String pkIzena = getZutabeIzenak()[0]; // Lehenengo zutabea da primary key-a
+        String pkIzena = getZutabeIzenak()[0]; 
 
         try (Connection cn = new Conexioa().getConnection()) {
 
