@@ -14,7 +14,7 @@ public class PantailaTaulak extends JFrame {
 
     // Botoiak
     private JButton btnBezeroak, btnErosketak, btnHornitzaileak, btnLangileak,
-                    btnProduktuak, btnSalmentak, btnSaskiak, btnSoportea;
+                    btnProduktuak, btnSalmentak, btnSaskiak, btnArazoak;
 
     public PantailaTaulak(String rola) {
         this.rola = rola;
@@ -41,7 +41,7 @@ public class PantailaTaulak extends JFrame {
         btnProduktuak    = new JButton("Produktuak");     btnProduktuak.addActionListener(this::irikiProduktuak);
         btnSalmentak     = new JButton("Salmentak");      btnSalmentak.addActionListener(this::irikiSalmentak);
         btnSaskiak       = new JButton("Saskiak");        btnSaskiak.addActionListener(this::irikiSaskiak);
-        btnSoportea      = new JButton("Soportea");       btnSoportea.addActionListener(this::irikiSoportea);
+        btnArazoak      = new JButton("Arazoak");       btnArazoak.addActionListener(this::irikiArazoak);
 
         contentPane.add(btnBezeroak);
         contentPane.add(btnErosketak);
@@ -50,7 +50,7 @@ public class PantailaTaulak extends JFrame {
         contentPane.add(btnProduktuak);
         contentPane.add(btnSalmentak);
         contentPane.add(btnSaskiak);
-        contentPane.add(btnSoportea);
+        contentPane.add(btnArazoak);
     }
 
     private void kendu(JButton b) {
@@ -110,7 +110,7 @@ public class PantailaTaulak extends JFrame {
                 .setVisible(true);
     }
 
-    private void irikiSoportea(ActionEvent e) {
+    private void irikiArazoak(ActionEvent e) {
         new TaulaLeihoak.Arazoak()
                 .setBaimenak(perIns("arazoak"), perUpd("arazoak"), perDel("arazoak"))
                 .setVisible(true);
