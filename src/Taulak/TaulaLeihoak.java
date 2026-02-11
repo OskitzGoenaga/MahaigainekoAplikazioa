@@ -231,13 +231,13 @@ public class TaulaLeihoak {
         }
     }
 
-    // ------------------ SASKIA ------------------
-    public static class Saskia extends KontsultaOrokorrak {
-        public Saskia() { super("Saskia"); }
+    // ------------------ SASKIAK ------------------
+    public static class Saskiak extends KontsultaOrokorrak {
+        public Saskiak() { super("Saskiak"); }
         
         @Override 
         protected String getTaula() { 
-            return "saskia"; 
+            return "saskiak"; 
         }
         
         @Override 
